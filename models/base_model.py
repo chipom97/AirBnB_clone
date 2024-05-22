@@ -53,6 +53,6 @@ of __dict__ of the instance
 """
         dict_copy = self.__dict__.copy()
         dict_copy['__class__'] = self.__class__.__name__
+        dict_copy['updated_at'] = self.updated_at.isoformat()
         dict_copy['created_at'] = self.created_at.isoformat()
-        dict_copy['updated_at'] = sel.updated_at.isoformat()
         return dict_copy
