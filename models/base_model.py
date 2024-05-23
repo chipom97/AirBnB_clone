@@ -16,18 +16,25 @@ This class provides a base for all other models,
 containing common public attributes such as ID,
 creation timestamp, and last update timestamp.
 """
-    def __init__(self):
-        """
-
-Initialize BaseModel object.
+    def __init__(self, *args, **kwargs):
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == "__class__":
+                    continue
+                if key == "created_at" or key == "updated_at"):
+                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
+                setattr(self, key, value)
+        else:
+            """
+If Kwargs (dictionary argument) is empty Initialize BaseModel object.
 Parameters:
 - id: The ID of object
 - created_at: The creation timestamp
 - updated_at: The last update timestamp
 """
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def save(self):
         """
