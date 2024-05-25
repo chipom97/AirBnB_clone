@@ -8,9 +8,13 @@ from datetime import datetime
 
 
 class BaseModel:
+
+    class_map = {
+    "BaseModel": BaseModel
+}
     """
 
-Base class for aall models.
+Base class for all models.
 
 This class provides a base for all other models,
 containing common public attributes such as ID,
