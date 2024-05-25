@@ -2,7 +2,6 @@
 """
 Modules needed for the BaseModel class
 """
-import models
 from uuid import uuid4
 from datetime import datetime
 
@@ -10,8 +9,8 @@ from datetime import datetime
 class BaseModel:
 
     class_map = {
-    "BaseModel": BaseModel
-}
+        "BaseModel": "BaseModel"
+        }
     """
 
 Base class for all models.
@@ -21,8 +20,8 @@ containing common public attributes such as ID,
 creation timestamp, and last update timestamp.
 """
     def __init__(self, *args, **kwargs):
-                    """
-If Kwargs (dictionary argument) is empty Initialize BaseModel object.               
+        """
+If Kwargs (dictionary argument) is empty Initialize BaseModel object.
 """
         self.id = str(uuid4())
         self.created_at = datetime.now()
@@ -35,7 +34,8 @@ If Kwargs (dictionary argument) is empty Initialize BaseModel object.
                     value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
                 setattr(self, key, value)
         else:
-            models.storage.new(self)
+            from models import storage
+            storage.new(self)
 
     def save(self):
         """
@@ -44,7 +44,8 @@ updates the public instance attribute
 updated_at with the current datetime
 """
         self.updated_at = datetime.now()
-        models.storage.save()
+        from models import storage
+        storage.save()
 
     def __str__(self):
         """
@@ -65,3 +66,7 @@ of __dict__ of the instance
         dict_copy['updated_at'] = self.updated_at.isoformat()
         dict_copy['created_at'] = self.created_at.isoformat()
         return dict_copy
+
+BaseModel.class_map = {
+    "BaseModel": BaseModel
+}
