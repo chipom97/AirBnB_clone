@@ -24,9 +24,9 @@ class BaseModel:
         """update to current datetime"""
         self.updated_at = datetime.now()
 
-        def to_dict(self):
-            dict_rep = self.__dict__.copy()
-            dict_rep['__class__'] = self.__class__.__name__
-            dict_rep['created_at'] = self.created_at.isoformat()
-            dict_rep['updated_at'] = self.updated_at.isoformat()
-            return dict_rep
+    def to_dict(self):
+        dict_rep = self.__dict__.copy()
+        dict_rep['__class__'] = self.__class__.__name__
+        dict_rep['created_at'] = self.created_at.isoformat()
+        dict_rep['updated_at'] = self.updated_at.isoformat()
+        return dict_rep
