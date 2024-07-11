@@ -4,6 +4,7 @@
 
 import uuid
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -29,6 +30,7 @@ class BaseModel:
     def save(self):
         """update to current datetime"""
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """Return the dictionary of the BaseModel instance"""
