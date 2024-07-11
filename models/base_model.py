@@ -11,16 +11,16 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Initialize a new Basemodel"""
-         if kwargs:
-             for key, value in kwargs.items():
-                 if key != '__class__':
-                     if key in ('created_at', 'updated_at'):
-                         value = datetime.fromisoformat(value)
-                         setattr(self, key, value)
-         else:
-             self.id = str(uuid.uuid4())
-             self.created_at = datetime.now()
-             self.updated_at = self.created_at
+        tform = "%Y-%m-%dT%H:%M:%S.%f"
+        self.id = str(uuid4())
+        self.created_at = datetime.today()
+        self.updated_at = datetime.today()
+        if len(kwargs) != 0:
+            for k, v in kwargs.items():
+                if k == "created_at" or k == "updated_at":
+                    self.__dict__[k] = datetime.strptime(v, tform)
+                else:
+                    self.__dict__[k] = v
         
     def __str__(self):
         """Return the string representation of a BaseModel instance"""
