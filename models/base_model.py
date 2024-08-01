@@ -10,10 +10,13 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Will be initialised using a dictionary."""
         if kwargs:
-            for key, value in kwargs.itmes():
+            for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
                     # datetime is coverted from string to object
                     value = datetime.fromisoformat(value)
+                elif key == "__class__":
+                    # Skip setting the special '__class__' attribute
+                    continue
                     # sets (self, key, vale) for remaing attributes
                 setattr(self, key, value)
         else:
@@ -30,10 +33,15 @@ class BaseModel:
         self.update_at = datetime.now()
 
     def to_dict(self):
-        """Return a dictionary of the BaseModel"""
-        return {
-            'id': self.id,
-            'created_at': self.created_at.isoformat(),
-            'updated_at': self.updated_at.isoformat(),
-            '__class__': self.__class__.__name__
-            }
+        """Return a dictionary of the BaseModel, these will be used to
+        initialise a new instance except for __class__.
+        we make a copy of the original dictionary so that we can see,
+        test cases where new attributes are added"""
+        rdict = self.__dict__.copy()
+        # copy the dictionary and modify it and return the modified on
+        # we are adding a new key __class__ while making datetime strings
+        # id is okay, so we skip it
+        rdict["created_at"] = self.created_at.isoformat()
+        rdict["updated_at"] = self.updated_at.isoformat()
+        rdict["__class__"] = self.__class__.__name__
+        return rdict
