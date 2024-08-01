@@ -7,11 +7,19 @@ from datetime import datetime
 class BaseModel:
     """Represents the BaseModel for the project."""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """Will be initialised using a dictionary."""
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.itmes():
+                if key == "created_at" or key == "updated_at":
+                    # datetime is coverted from string to object
+                    value = datetime.fromisoformat(value)
+                    # sets (self, key, vale) for remaing attributes
+                setattr(self, key, value)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """Retrurn a string description of the object"""
