@@ -1,8 +1,8 @@
 #!/usr/bin/python3
 """Defines a BaseModel class"""
+import models
 from uuid import uuid4
 from datetime import datetime
-
 
 class BaseModel:
     """Represents the BaseModel for the project."""
@@ -23,6 +23,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            models.storage.new(self)
 
     def __str__(self):
         """Retrurn a string description of the object"""
@@ -30,7 +31,8 @@ class BaseModel:
 
     def save(self):
         """Update updated_at to the current datetime"""
-        self.update_at = datetime.now()
+        self.updated_at = datetime.now()
+        models.storage.save()
 
     def to_dict(self):
         """Return a dictionary of the BaseModel, these will be used to
