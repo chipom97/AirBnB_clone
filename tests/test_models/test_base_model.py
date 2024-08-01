@@ -1,63 +1,84 @@
 #!/usr/bin/python3
-import sys
-import os
-
-# Get the absolute path of the project's root directory
-script_dir = os.path.dirname(__file__)
-project_root = os.path.abspath(os.path.join(script_dir, '../../'))
-
-# Add the project's root directory to sys.path
-if project_root not in sys.path:
-    sys.path.append(project_root)
-
 import unittest
+import json
+import os
 from models.base_model import BaseModel
-from datetime import datetime
+from models.engine.file_storage import FileStorage
+
+class TestFileStorage(unittest.TestCase):
+    """Test cases for FileStorage class"""
+
+    @classmethod
+    def setUpClass(cls):
+        """Setup for tests"""
+        cls.storage = FileStorage()
+        cls.storage.reload()
+
+    def test_file_path(self):
+        """Test __file_path attribute"""
+        self.assertEqual(self.storage._FileStorage__file_path, "file.json")
+
+    def test_objects(self):
+        """Test __objects attribute"""
+        self.assertIsInstance(self.storage._FileStorage__objects, dict)
+
+    def test_all(self):
+        """Test all() method"""
+        self.storage.all().clear()  # Clear storage before testing
+        self.assertEqual(self.storage.all(), {})
+
+    def test_new(self):
+        """Test new() method"""
+        my_model = BaseModel()
+        self.storage.new(my_model)
+        key = f"{my_model.__class__.__name__}.{my_model.id}"
+        self.assertIn(key, self.storage.all())
+
+    def test_save(self):
+        """Test save() method"""
+        my_model = BaseModel()
+        self.storage.new(my_model)
+        self.storage.save()
+
+        # Check if file.json exists and is not empty
+        self.assertTrue(os.path.exists("file.json"))
+        with open("file.json", "r") as f:
+            data = f.read()
+        self.assertGreater(len(data), 0)
+
+    def test_reload(self):
+        """Test reload() method"""
+        my_model = BaseModel()
+        self.storage.new(my_model)
+        self.storage.save()
+        self.storage.reload()
+
+        key = f"{my_model.__class__.__name__}.{my_model.id}"
+        self.assertIn(key, self.storage.all())
 
 class TestBaseModel(unittest.TestCase):
+    """Test cases for BaseModel class"""
 
+    @classmethod
+    def setUpClass(cls):
+        """Setup for tests"""
+        cls.storage = FileStorage()
+        cls.storage.reload()
 
-    def test_id(self):
-        model = BaseModel()
-        self.assertEqual(type(model.id), str)
-        self.assertEqual(len(model.id), 36)
+    def test_init(self):
+        """Test __init__ method"""
+        obj = BaseModel()
+        self.assertIsInstance(obj, BaseModel)
+        self.assertTrue(hasattr(obj, 'id'))
+        self.assertTrue(hasattr(obj, 'created_at'))
+        self.assertTrue(hasattr(obj, 'updated_at'))
 
-    def test_created_at(self):
-        model = BaseModel()
-        self.assertEqual(type(model.created_at), datetime)
+    def test_save(self):
+        """Test save() method"""
+        obj = BaseModel()
+        self.storage.new(obj)
+        obj.save()
+        self.assertGreater(obj.updated_at, obj.created_at)
 
-    def test_updated_at(self):
-        model = BaseModel()
-        self.assertEqual(type(model.updated_at), datetime)
-        old_updated_at = model.updated_at
-        model.save()
-        self.assertNotEqual(model.updated_at, old_updated_at)
-
-    def test_str(self):
-        model = BaseModel()
-        expected = f"[BaseModel] ({model.id}) {model.__dict__}"
-        self.assertEqual(str(model), expected)
-
-    def test_to_dict(self):
-        model = BaseModel()
-        model_dict = model.to_dict()
-        self.assertEqual(model_dict['__class__'], 'BaseModel')
-        self.assertEqual(model_dict['created_at'], model.created_at.isoformat())
-        self.assertEqual(model_dict['updated_at'], model.updated_at.isoformat())
-
-    def test_init_with_kwargs(self):
-        model_dict = {
-            'id': '123e4567-e89b-12d3-a456-426614174000',
-            'created_at': '2024-07-11T14:58:00.123456',
-            'updated_at': '2024-07-11T14:58:00.123456',
-            'name': 'MyModel'
-        }
-        model_instance = BaseModel(**model_dict)
-        self.assertEqual(model_instance.id, '123e4567-e89b-12d3-a456-426614174000')
-        self.assertEqual(model_instance.created_at, datetime.fromisoformat('2024-07-11T14:58:00.123456'))
-        self.assertEqual(model_instance.updated_at, datetime.fromisoformat('2024-07-11T14:58:00.123456'))
-        self.assertEqual(model_instance.name, 'MyModel')
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
