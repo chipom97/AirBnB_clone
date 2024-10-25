@@ -1,7 +1,7 @@
 import json
 from uuid import uuid4
 from datetime import datetime
-
+import os
 
 class Person:
     serialized_obj = {}
@@ -89,14 +89,16 @@ class Person:
 
     def reload(self):
         with open("file.json", "r") as file:
-            content = json.load(file)
-            print(content)
+            try:
+                if os.path.getsize("file.json") > 0:
+                    content = json.load(file)
 
-            for k, v in content.items():
-                # print("key", k)
-                # print("value", v)
-
-                self.serialized_obj[k] = v
+                    for k, v in content.items():
+                        # print("key", k)
+                        # print("value", v)
+                        self.serialized_obj[k] = v
+            except json.decoder.JSONDecodeError:
+                print("Unable to decode file storage")
 
 
 # instantiate our class
