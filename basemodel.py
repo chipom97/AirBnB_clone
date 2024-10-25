@@ -53,6 +53,33 @@ class BaseModel:
 # instantiate our class
 
 model = BaseModel()
-model.to_dict()
+#model.to_dict()
 
 
+class FileStorage:
+    __file_path = "file.json"
+    __objects = {}
+    
+    def all(self):
+        return self.__objects
+    
+    def new(self, obj):
+        key = f"{obj.__class__.__name__}.{obj.id}"
+        
+        self.__objects[key] = obj
+        
+    def save(self):
+        serialized_obj = {}
+        
+        for k,v in self.__objects.items():
+            serialized_obj[k] = v.to_dict()
+            
+            with open(self.__file_path, "w") as file:
+                json.dump(serialized_obj, file, indent=2)
+            
+        
+storage = FileStorage()
+storage.new(model)
+all_obj = storage.all()
+#print(all_obj)
+storage.save()
