@@ -1,8 +1,12 @@
-from models.basemodel import BaseModel
+print("before import of the file storage")
+
+print("Last part of file storage")
 import json
+
+
 # filestorage.py
 class FileStorage:
-    CLASSES = {"BaseModel": BaseModel}
+
     # map every clas that  we create in this dictionary
     __file_path = "file.json"
     __objects = {}
@@ -25,7 +29,9 @@ class FileStorage:
                 json.dump(serialized_obj, file, indent=2)
 
     def reload(self):
+        from models.basemodel import BaseModel
 
+        CLASSES = {"BaseModel": BaseModel}
         with open(self.__file_path, "r") as file:
             content = json.load(file)
 
@@ -39,3 +45,6 @@ class FileStorage:
                     print("reloaded_instance", instance)
 
                     self.__objects[k] = instance
+
+
+print("Last part of file storage")

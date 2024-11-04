@@ -1,5 +1,5 @@
 # basemodel.py
-
+print("basemodel imported")
 from uuid import uuid4
 from datetime import datetime
 
@@ -41,7 +41,7 @@ class BaseModel:
 
         to_json["created_at"] = to_json["created_at"].isoformat()
         to_json["updated_at"] = to_json["updated_at"].isoformat()
-
+        print(to_json)
         return to_json
 
 
