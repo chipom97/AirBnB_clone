@@ -1,7 +1,10 @@
-import json
+# basemodel.py
+
 from uuid import uuid4
 from datetime import datetime
-import os
+
+# import os
+from models.engine.filestorage import FileStorage
 
 
 class BaseModel:
@@ -40,3 +43,8 @@ class BaseModel:
         to_json["updated_at"] = to_json["updated_at"].isoformat()
 
         return to_json
+
+
+model = BaseModel()
+storage = FileStorage()
+print(model)

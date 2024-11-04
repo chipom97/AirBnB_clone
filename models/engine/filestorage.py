@@ -1,3 +1,6 @@
+from models.basemodel import BaseModel
+import json
+# filestorage.py
 class FileStorage:
     CLASSES = {"BaseModel": BaseModel}
     # map every clas that  we create in this dictionary
