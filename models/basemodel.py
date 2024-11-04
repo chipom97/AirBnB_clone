@@ -1,5 +1,4 @@
 # basemodel.py
-print("basemodel imported")
 from uuid import uuid4
 from datetime import datetime
 
